@@ -18,7 +18,7 @@
 	$selectedStops = [];
 	
 	// Server info
-	$servername = "***********************";
+	$servername = "******************************";
 	$username = "centroWriter";
 	$password = "centroWriter";
 	$dbname = "Centro";
@@ -208,7 +208,7 @@
 		
 		$filterReady = true;
 		
-		// Make sure that a date range was given, at least one route was selected 
+		// Make sure that a date range was given
 		if ($date_from == null || $date_from == false || $date_to == null || $date_to == false || $date_from > $date_to) {
 			echo "<div class=\"data_field0\">Please select a valid date range!</div>";
 			$filterReady = false;
@@ -299,11 +299,6 @@
 			
 		}
 ?>
-			<!--
-			<h3>Route 1: </h3>
-			<h3>Route 2: </h3>
-			<h3>Route 3: </h3>
-			-->
 		</div>
 	</body>
 </html>
