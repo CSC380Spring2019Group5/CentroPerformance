@@ -18,7 +18,7 @@
 	$selectedStops = [];
 	
 	// Server info
-	$servername = "******************************";
+	$servername = "*****************";
 	$username = "centroWriter";
 	$password = "centroWriter";
 	$dbname = "Centro";
@@ -264,6 +264,7 @@
 				$hsIndex = 1;
 				$stLast = "";
 				$stHighlight = true;
+				$stFound = false;
 				while($historyRow = $historyResult->fetch_assoc()) {
 					
 					// Search through all stops to see if the bus was close to any
@@ -285,6 +286,7 @@
 								echo " on a " . $weekdays[$weekday] . "</div>";
 								
 								$stHighlight = !$stHighlight;
+								$stFound = true;
 							}
 							$stLast = $stopNms[$stIndex];
 						}
@@ -293,6 +295,9 @@
 					
 					$hsIndex++;
 				}
+				
+				if (!$stFound)
+					echo "<div class=\"data_field0\">There is no data that matches your filter... Please choose another date range, route, or stop to filter!</div>";
 			} else {
 				echo "<div class=\"data_field0\">There is no data that matches your filter... Please choose another date range, route, or stop to filter!</div>";
 			}
