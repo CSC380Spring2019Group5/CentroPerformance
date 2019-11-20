@@ -13,12 +13,14 @@
 	$scheduleIds = []; // Schedule ids
 	$scheduleRts = []; // Schedule routes
 	$scheduleTms = []; // Schedule times
+
+	
 	
 	$selectedRoutes = [];
 	$selectedStops = [];
 	
 	// Server info
-	$servername = "*****************";
+	$servername = "**********************";
 	$username = "centroWriter";
 	$password = "centroWriter";
 	$dbname = "Centro";
@@ -204,6 +206,10 @@
 		<div class="data">
 			<h2>Route Data</h2>
 			<p>
+
+
+			<button id="btn_hide" onclick="show_raw_data()">Show Raw Data</button>
+			<div id="raw_data">
 <?php
 		
 		$filterReady = true;
@@ -301,9 +307,12 @@
 			} else {
 				echo "<div class=\"data_field0\">There is no data that matches your filter... Please choose another date range, route, or stop to filter!</div>";
 			}
+
+			
 			
 		}
 ?>
+			</div>
 		</div>
 	</body>
 </html>

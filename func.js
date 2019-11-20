@@ -1,3 +1,15 @@
+function show_raw_data() {
+	var raw = document.getElementById("raw_data");
+
+	if (raw.style.visibility == "hidden") {
+		raw.style.visibility = "visible";
+		raw.style.display = "block";
+	} else {
+		raw.style.visibility = "hidden";
+		raw.style.display = "none";
+	}
+}
+
 
 function select_route() {
 	var dropdown = document.getElementById("route_list");

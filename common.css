@@ -238,3 +238,23 @@ select:hover {
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	cursor: pointer;
 }
+
+#btn_hide {
+	background-color: rgb(243, 243, 243);
+	border-radius: 8px;
+	border: 0px solid black;
+	color: rgb(36, 41, 46);
+	padding: 10px 18px;
+	text-align: center;
+	font-size: 18px;
+	display: block;
+	max-width: 300px;
+	margin: auto;
+	margin-top: 24px;
+	margin-bottom: 16px;
+}
+
+#btn_hide:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	cursor: pointer;
+}
