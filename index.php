@@ -2,7 +2,7 @@
 	$weekdays = array(1 => 'Monday',2 => 'Tuesday',3 => 'Wednesday',4 => 'Thursday',5 => 'Friday',6 => 'Saturday',7 => 'Sunday');
 	
 	$routeNms = array("All Routes"); // Route names
-	$routeIds = array("*"); // Route ids
+	$routeIds = array("0"); // Route ids
 	
 	$stopIds = array("0"); // Stop ids
 	$stopRts = array("0"); // Stop routes
@@ -13,14 +13,12 @@
 	$scheduleIds = []; // Schedule ids
 	$scheduleRts = []; // Schedule routes
 	$scheduleTms = []; // Schedule times
-
-	
 	
 	$selectedRoutes = [];
 	$selectedStops = [];
 	
 	// Server info
-	$servername = "**********************";
+	$servername = "pi.cs.oswego.edu";
 	$username = "centroWriter";
 	$password = "centroWriter";
 	$dbname = "Centro";
@@ -34,45 +32,40 @@
 	}
 	else {
 		// Get a list of available routes
-		$sql = "SELECT id, rt, rtnm FROM routes";
+		$sql = "SELECT rt, rtnm FROM routes WHERE INSTR(rt, 'OSW') > 0 AND INSTR(rt, 'OSW09') = 0";
 		$routesResult = $conn->query($sql);
 		
 		// Make sure we got the route data
 		if ($routesResult->num_rows > 0) {
 			// Save every route
-			$rtIndex = 1;
 			while($routeRow = $routesResult->fetch_assoc()) {
 				array_push($routeNms, $routeRow["rt"] . ": " . $routeRow["rtnm"]);
 				array_push($routeIds, $routeRow["rt"]);
-				$rtIndex++;
 			}
 		}
 		
 		// Get a list of available stops
-		$sql = "SELECT stopid, rtId, stpnm, lat, lon FROM stops";
+		$sql = "SELECT stopid, rtnm, stpnm, lat, lon, dir FROM stops";
 		$stopsResult = $conn->query($sql);
 		
 		// Make sure we got the stop data
 		if ($stopsResult->num_rows > 0) {
 			// Save every stop
-			$stIndex = 1;
 			while($stopRow = $stopsResult->fetch_assoc()) {
-				// Ignore any duplicates (database has duplicate stops for some reason)
-				$stId = $stopRow["stopid"];
-				if (!in_array($stId, $stopIds)) {
-					array_push($stopIds, $stId);
-					array_push($stopRts, $stopRow["rtId"]);
-					array_push($stopNms, $stopRow["stpnm"]);
+				// Ignore any duplicates
+				if (!in_array($stopRow["stopid"], $stopIds)) {
+					array_push($stopIds, $stopRow["stopid"]);
+					array_push($stopRts, $stopRow["rtnm"]);
+					array_push($stopNms, $stopRow["dir"] . ": " . $stopRow["stpnm"]);
 					array_push($stopLat, $stopRow["lat"]);
 					array_push($stopLon, $stopRow["lon"]);
-					$stIndex++;
 				}
 			}
 		}
 		
 		
 		// Get a list of expected schedule times
-		$sql = "SELECT rtId, stopid, scheduledTime FROM busSchedule";
+		/*$sql = "SELECT rtId, stopid, scheduledTime FROM busSchedule";
 		$scheduleResult = $conn->query($sql);
 		
 		// Make sure we got the schedule data
@@ -85,7 +78,7 @@
 				array_push($scheduleTms, $scheduleRow["scheduledTime"]);
 				$scIndex++;
 			}
-		}
+		}*/
 ?>
 
 <!DOCTYPE html>
@@ -105,14 +98,14 @@
 			<br>
 			<form id="filter_form" action="./index.php">
 				From Date: 
-				<input class="date_input" id="date_from" type="date" name="date_from" min="2018-11-14" max="<?php echo date('Y-m-d'); ?>" value="<?php
+				<input class="date_input" id="date_from" type="date" name="date_from" min="2019-11-23" max="<?php echo date('Y-m-d'); ?>" value="<?php
 		// Check the input date from field
 		$date_from = filter_input(INPUT_GET, "date_from", FILTER_SANITIZE_STRING);
 		if ($date_from != null && $date_from != false)
 			echo $date_from;
 ?>">
 				To Date: 
-				<input class="date_input" id="date_to" type="date" name="date_to" min="2018-11-14" max="<?php echo date('Y-m-d'); ?>" value="<?php
+				<input class="date_input" id="date_to" type="date" name="date_to" min="2019-11-23" max="<?php echo date('Y-m-d'); ?>" value="<?php
 		// Check the input date to field
 		$date_to = filter_input(INPUT_GET, "date_to", FILTER_SANITIZE_STRING);
 		if ($date_to != null && $date_to != false)
@@ -125,15 +118,20 @@
 <?php
 		// Check each route filter selection
 		$rtIndex = 0;
-		$route = filter_input(INPUT_GET, "route" . $rtIndex, FILTER_SANITIZE_NUMBER_INT);
-		while($route != null && ($route != false || $route == "0")) {
+		$routeName = filter_input(INPUT_GET, "route" . $rtIndex, FILTER_SANITIZE_STRING);
+		while($routeName != null && ($routeName != false || $routeName == "0")) {
 			
-			// Add the route selection to the selected list
-			echo "<div class=\"route_selection\" onclick=\"deselect_route(this)\" value=\"" . $route . "\">" . $routeNms[$route] . "</div>";
-			array_push($selectedRoutes, $route);
+			// Find which route is selected
+			$route = array_search($routeName, $routeIds);
+			if ($route != false || $routeName == "0") {
+				
+				// Add the route selection to the selected list
+				echo "<div class=\"route_selection\" onclick=\"deselect_route(this)\" value=\"" . $routeName . "\">" . $routeNms[$route] . "</div>";
+				array_push($selectedRoutes, $routeName);
+			}
 			
 			$rtIndex++;
-			$route = filter_input(INPUT_GET, "route" . $rtIndex, FILTER_SANITIZE_NUMBER_INT);
+			$routeName = filter_input(INPUT_GET, "route" . $rtIndex, FILTER_SANITIZE_STRING);
 		}
 ?>				
 				</div>
@@ -148,10 +146,10 @@
 		// Add an option for every route
 		$rtIndex = 0;
 		foreach ($routeNms as $rtNm) {
-			if (!in_array($rtIndex, $selectedRoutes))
-				echo "<option value = \"" . $rtIndex . "\">" . $rtNm . "</option>";
+			if (!in_array($routeIds[$rtIndex], $selectedRoutes))
+				echo "<option value = \"" . $routeIds[$rtIndex] . "\">" . $rtNm . "</option>";
 			else
-				echo "<option value = \"" . $rtIndex . "\" style=\"visibility: hidden; display: none;\">" . $rtNm . "</option>";
+				echo "<option value = \"" . $routeIds[$rtIndex] . "\" style=\"visibility: hidden; display: none;\">" . $rtNm . "</option>";
 			$rtIndex++;
 		}
 ?>
@@ -206,9 +204,7 @@
 		<div class="data">
 			<h2>Route Data</h2>
 			<p>
-
-
-			<button id="btn_hide" onclick="show_raw_data()">Show Raw Data</button>
+			<button id="btn_hide" onclick="show_raw_data()">Hide Raw Data</button>
 			<div id="raw_data">
 <?php
 		
@@ -251,10 +247,10 @@
 			if ($selectedRoutes[0] == "0")
 				$rtSelect = "";
 			else {
-				$rtSelect = "rt IN ('" . $routeIds[$selectedRoutes[0]] . "'";
+				$rtSelect = "rt IN ('" . $selectedRoutes[0] . "'";
 				$rtSelectIndex = 1;
 				while($rtSelectIndex < count($selectedRoutes)) {
-					$rtSelect = $rtSelect . ",'" . $routeIds[$selectedRoutes[$rtSelectIndex]] . "'";
+					$rtSelect = $rtSelect . ",'" . $selectedRoutes[$rtSelectIndex] . "'";
 					$rtSelectIndex++;
 				}
 				$rtSelect = $rtSelect . ") AND ";
@@ -307,8 +303,6 @@
 			} else {
 				echo "<div class=\"data_field0\">There is no data that matches your filter... Please choose another date range, route, or stop to filter!</div>";
 			}
-
-			
 			
 		}
 ?>

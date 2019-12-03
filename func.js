@@ -4,12 +4,13 @@ function show_raw_data() {
 	if (raw.style.visibility == "hidden") {
 		raw.style.visibility = "visible";
 		raw.style.display = "block";
+		document.getElementById("btn_hide").innerHTML = "Hide Raw Data";
 	} else {
 		raw.style.visibility = "hidden";
 		raw.style.display = "none";
+		document.getElementById("btn_hide").innerHTML = "Show Raw Data";
 	}
 }
-
 
 function select_route() {
 	var dropdown = document.getElementById("route_list");
