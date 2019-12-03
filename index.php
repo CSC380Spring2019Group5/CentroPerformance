@@ -18,7 +18,7 @@
 	$selectedStops = [];
 	
 	// Server info
-	$servername = "pi.cs.oswego.edu";
+	$servername = "*********************";
 	$username = "centroWriter";
 	$password = "centroWriter";
 	$dbname = "Centro";
