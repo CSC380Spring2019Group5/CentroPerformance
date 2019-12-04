@@ -1,0 +1,260 @@
+html {
+	margin: 0px;
+	padding: 0px;
+}
+
+body {
+	background-color: rgb(40, 114, 181);
+	color: rgb(36, 41, 46);
+	font-family: Helvetica;
+	font-size: 18px;
+	line-height: 1.5;
+	padding: 0px;
+	margin: 0px;
+	min-width: 500px; 
+}
+
+.filter {
+	background-color: rgb(206, 226, 244);
+	padding-top: 16px;
+	padding-bottom: 10px;
+	padding-left: 32px;
+	padding-right: 32px;
+	margin: 24px;
+	border-top-left-radius: 32px;
+	border-bottom-right-radius: 32px;
+	border: 0px solid black;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.data {
+	background-color: rgb(206, 226, 244);
+	padding-top: 16px;
+	padding-bottom: 32px;
+	padding-left: 32px;
+	padding-right: 44px;
+	margin: 24px;
+	border: 0px solid black;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.header {
+	background-color: rgb(206, 226, 244);
+	margin: 24px;
+	padding-top: 16px;
+	padding-bottom: 16px;
+	border: 0px solid black;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+h1 {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	text-align: center;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+h2 {
+	padding-left: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	text-align: center;
+	font-size: 22px;
+	font-weight: normal;
+}
+
+h3 {
+	font-size: 20px;
+	font-weight: normal;
+}
+
+a {
+	color: rgb(3, 102, 214);
+	cursor: pointer;
+}
+
+hr {
+	margin-top: 32px;
+	margin-bottom: 32px;
+	border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+
+select {
+	border: 0px solid black;
+	width: 100%;
+	height: 32px;
+	padding-left: 8px;
+	font-size: 16px;
+	background-color: rgb(243, 243, 243);
+}
+
+select:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	cursor: pointer;
+}
+
+.date_input {
+	margin-right: 16px;
+	border: 0px solid black;
+	height: 32px;
+	padding-left: 8px;
+	font-size: 16px;
+	background-color: rgb(243, 243, 243);	
+}
+
+.date_input:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	cursor: pointer;
+}
+
+.route_selection {
+	background-color: rgb(243, 243, 243);
+	border-radius: 8px;
+	border: 0px solid black;
+	color: rgb(36, 41, 46);
+	padding: 4px 10px;
+	margin-bottom: 8px;
+	margin-top: 8px;
+	text-align: left;
+	font-size: 16px;
+	z-index: 0;
+	position: relative;
+}
+
+.route_selection:hover {
+	background-color: rgb(243, 100, 100);
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	cursor: pointer;
+	z-index: 1;
+	position: relative;
+}
+
+.stop_selection {
+	background-color: rgb(243, 243, 243);
+	border-radius: 8px;
+	border: 0px solid black;
+	color: rgb(36, 41, 46);
+	padding: 4px 10px;
+	margin-bottom: 8px;
+	margin-top: 8px;
+	text-align: left;
+	font-size: 16px;
+	z-index: 0;
+	position: relative;
+}
+
+.stop_selection:hover {
+	background-color: rgb(243, 100, 100);
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	cursor: pointer;
+	z-index: 1;
+	position: relative;
+}
+
+.data_field0 {
+	background-color: #FF6464;
+	width: 100%; 
+	padding: 6px; 
+	margin-top: 0px; 
+	margin-bottom: 0px; 
+	margin-left: auto; 
+	margin-right: auto;
+	z-index: 0;
+	position: relative;
+}
+
+.data_field1 {
+	background-color: #FFFFFF;
+	width: 100%; 
+	padding: 6px; 
+	margin-top: 0px; 
+	margin-bottom: 0px; 
+	margin-left: auto; 
+	margin-right: auto;
+	z-index: 0;
+	position: relative;
+}
+
+.data_field2 {
+	background-color: #E2F6FE;
+	width: 100%; 
+	padding: 6px; 
+	margin-top: 0px; 
+	margin-bottom: 0px; 
+	margin-left: auto; 
+	margin-right: auto;
+	z-index: 0;
+	position: relative;
+}
+
+.data_field0:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	cursor: pointer;
+	z-index: 1;
+	position: relative;
+}
+
+.data_field1:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	cursor: pointer;
+	background-color: rgb(100, 243, 100);
+	z-index: 1;
+	position: relative;
+}
+
+.data_field2:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	cursor: pointer;
+	background-color: rgb(100, 243, 100);
+	z-index: 1;
+	position: relative;
+}
+
+#btn_submit {
+	background-color: rgb(243, 243, 243);
+	border-radius: 8px;
+	border: 0px solid black;
+	color: rgb(36, 41, 46);
+	padding: 10px 18px;
+	text-align: center;
+	font-size: 18px;
+	display: block;
+	max-width: 300px;
+	margin: auto;
+	margin-top: 24px;
+	margin-bottom: 16px;
+}
+
+#btn_submit:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	cursor: pointer;
+}
+
+#btn_hide {
+	background-color: rgb(243, 243, 243);
+	border-radius: 8px;
+	border: 0px solid black;
+	color: rgb(36, 41, 46);
+	padding: 10px 18px;
+	text-align: center;
+	font-size: 18px;
+	display: block;
+	max-width: 300px;
+	margin: auto;
+	margin-top: 24px;
+	margin-bottom: 16px;
+}
+
+#btn_hide:hover {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	cursor: pointer;
+}
