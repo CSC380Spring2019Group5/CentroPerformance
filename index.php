@@ -14,6 +14,9 @@
 	$scheduleRts = []; // Schedule routes
 	$scheduleTms = []; // Schedule times
 	$scheduleDys = []; // Schedule days
+
+	$runningTotal = [];
+	$numAdditions = [];
 	
 	$selectedRoutes = [];
 	$selectedStops = [];
@@ -72,7 +75,6 @@
 		
 		// Make sure we got the schedule data
 		if ($scheduleResult->num_rows > 0) {
-			echo "Program made it to schedule data loop!<p><p>";
 			// Save every stop
 			$scIndex = 1;
 			while($scheduleRow = $scheduleResult->fetch_assoc()) {
@@ -80,10 +82,16 @@
 				array_push($scheduleRts, $scheduleRow["rt"]);
 				array_push($scheduleTms, $scheduleRow["time"]);
 				array_push($scheduleDys, $scheduleRow["day"]);
+				array_push($runningTotal, 0);
+				array_push($numAdditions, 0);
+
 
 				$scIndex++;
+				
 			}
 		}
+		
+		
 ?>
 
 <!DOCTYPE html>
@@ -303,33 +311,45 @@
 								
 								while($scheduleIndex < count($scheduleIds))
 								{
+
 									if($scheduleIds[$scheduleIndex] == $stopIds[$stIndex] )
 									{
+
 										if($scheduleDys[$scheduleIndex] == $weekday)
 										{
-											if(count($scheduleTms[$scheduleIndex]) == 4)
+
+											if(strlen($scheduleTms[$scheduleIndex]) == 4)
 											{
+												
+
 												$scheduleHours = substr($scheduleTms[$scheduleIndex],0,1);
-												$scheduleMinutes = substr($timeStamp,1,2);
+												$scheduleMinutes = substr($scheduleTms[$scheduleIndex],2,2);
+												
 
 											}
 											else
 											{
+												
+
 												$scheduleHours = substr($scheduleTms[$scheduleIndex],0,2);
-												$scheduleMinutes = substr($timeStamp,2,2);
-
+												$scheduleMinutes = substr($scheduleTms[$scheduleIndex],3,2);
 											}
+											
 
-											$scheduleTotalMins = ($scheduleHours * 60) + $scheduleMinutes;
+											$scheduleTotalMinutes = ($scheduleHours * 60) + $scheduleMinutes; 
 
 											//$lastIndex = $scheduleIndex;
 											//if($lastDif <  abs($totalMins - $scheduleMinutes))
-											$absValue = abs($totalMins - $scheduleMinutes);
+											//echo $totalMins . " " . $scheduleTotalMinutes . " - ";
+											$absValue = abs($totalMins - $scheduleTotalMinutes);
 											if($absValue < 10)
 											{
-												
-												echo $absValue;
-												$scheduleIndex = 999999;
+												//******************************* BROKE ***************************
+												$runningTotal [scheduleIndex] += ($totalMins - $scheduleTotalMinutes);
+												echo $runningTotal [scheduleIndex] . "<p><p>";
+												$numAdditions [scheduleIndex]++;
+												//echo $stopNms[$stIndex] . " " . $scheduleTms[$scheduleIndex] . " " . $timeStamp . "<p><p>" ;
+												$scheduleIndex++; 
 											}
 											else
 											{
@@ -352,12 +372,10 @@
 									}
 
 								}
-	//$stopIds[$stIndex] stop id
+								//$stopIds[$stIndex] stop id
 								
 	
 								//echo $timeStamp . " " . $hours . " " . $minutes . " - " . $totalMins . " --- ";
-
-								
 
 
 								
@@ -383,7 +401,49 @@
 				echo "<div class=\"data_field0\">There is no data that matches your filter... Please choose another date range, route, or stop to filter!</div>";
 			}
 			
+			$counter = 0;
+			//foreach($runningTotal)
+			for ($x = 0; $x < count($runningTotal); $x++) 
+			{
+				//echo $runningTotal [$x];
+				//echo $numAdditions [$x];
+
+				/*
+				if($runningTotal [$counter] == 0)
+				{
+					echo "No data for this stop.<p><p>";
+				}
+				else
+				{
+				*/
+					$diff = $runningTotal [$counter] / numAdditions [$counter];
+
+					if ($stHighlight)
+					{
+						echo "<div class=\"data_field1\">" . "Stop: " . $stopNms[$counter] . "<p><p>" . "</div>";
+						echo "<div class=\"data_field1\">" . "Average difference: " . $diff . "<p><p><p><p><p><p>" ."</div>";
+					}
+					else
+					{
+						echo "<div class=\"data_field2\">" . "Stop: " . $stopNms[$counter] . "<p><p>" . "</div>";
+						echo "<div class=\"data_field2\">" . "Average difference: " . $diff . "<p><p><p><p><p><p>" . "</div>";
+
+					}
+
+					$stHighlight = !$stHighlight;
+
+				//}
+	
+				$counter++;
+				
+			}
+			
+			
+
+			
 		}
+		
+		
 ?>
 			</div>
 		</div>
