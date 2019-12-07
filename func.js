@@ -4,11 +4,11 @@ function show_raw_data() {
 	if (raw.style.visibility == "hidden") {
 		raw.style.visibility = "visible";
 		raw.style.display = "block";
-		document.getElementById("btn_hide").innerHTML = "Hide Raw Data";
+		document.getElementById("btn_hide").innerHTML = "Hide Data";
 	} else {
 		raw.style.visibility = "hidden";
 		raw.style.display = "none";
-		document.getElementById("btn_hide").innerHTML = "Show Raw Data";
+		document.getElementById("btn_hide").innerHTML = "Show Data";
 	}
 }
 

@@ -13,12 +13,16 @@
 	$scheduleIds = []; // Schedule ids
 	$scheduleRts = []; // Schedule routes
 	$scheduleTms = []; // Schedule times
+	$scheduleDys = []; // Schedule days
+
+	$runningTotal = [];
+	$numAdditions = [];
 	
 	$selectedRoutes = [];
 	$selectedStops = [];
 	
 	// Server info
-	$servername = "*********************";
+	$servername = "pi.cs.oswego.edu";
 	$username = "centroWriter";
 	$password = "centroWriter";
 	$dbname = "Centro";
@@ -31,6 +35,7 @@
 		echo "Error: Could not connect to database!<p><p>";
 	}
 	else {
+
 		// Get a list of available routes
 		$sql = "SELECT rt, rtnm FROM routes WHERE INSTR(rt, 'OSW') > 0 AND INSTR(rt, 'OSW09') = 0";
 		$routesResult = $conn->query($sql);
@@ -65,7 +70,7 @@
 		
 		
 		// Get a list of expected schedule times
-		/*$sql = "SELECT rtId, stopid, scheduledTime FROM busSchedule";
+		$sql = "SELECT rt, stopid, time, day FROM schedule";
 		$scheduleResult = $conn->query($sql);
 		
 		// Make sure we got the schedule data
@@ -74,11 +79,19 @@
 			$scIndex = 1;
 			while($scheduleRow = $scheduleResult->fetch_assoc()) {
 				array_push($scheduleIds, $scheduleRow["stopid"]);
-				array_push($scheduleRts, $scheduleRow["rtId"]);
-				array_push($scheduleTms, $scheduleRow["scheduledTime"]);
+				array_push($scheduleRts, $scheduleRow["rt"]);
+				array_push($scheduleTms, $scheduleRow["time"]);
+				array_push($scheduleDys, $scheduleRow["day"]);
+				array_push($runningTotal, 0);
+				array_push($numAdditions, 0);
+
+
 				$scIndex++;
+				
 			}
-		}*/
+		}
+		
+		
 ?>
 
 <!DOCTYPE html>
@@ -204,7 +217,7 @@
 		<div class="data">
 			<h2>Route Data</h2>
 			<p>
-			<button id="btn_hide" onclick="show_raw_data()">Hide Raw Data</button>
+			<button id="btn_hide" onclick="show_raw_data()">Hide Data</button>
 			<div id="raw_data">
 <?php
 		
@@ -272,29 +285,89 @@
 					// Search through all stops to see if the bus was close to any
 					$stError = 0.00005; // within 5 meters
 					$stIndex = 1;
+
 					while($stIndex < count($stopIds)) {
 						if ($stLast != $stopNms[$stIndex] && $historyRow["lat"] > $stopLat[$stIndex] - $stError && $historyRow["lat"] < $stopLat[$stIndex] + $stError && $historyRow["lon"] > $stopLon[$stIndex] - $stError && $historyRow["lon"] < $stopLon[$stIndex] + $stError) {
 							if ($selectedStops[0] == "0" || in_array($stopIds[$stIndex], $selectedStops)) {
 								// Format the timestamp
 								$tmstmp = substr($historyRow["tmstmp"],0,4) . "-" . substr($historyRow["tmstmp"],4,2) . "-" . substr($historyRow["tmstmp"],6,2) . " @ " . substr($historyRow["tmstmp"],8,9);
 								
-								if ($stHighlight)
-									echo "<div class=\"data_field1\">" . $tmstmp . " : " . $stopNms[$stIndex] . " on route " . $historyRow["des"];
-								else
-									echo "<div class=\"data_field2\">" . $tmstmp . " : " . $stopNms[$stIndex] . " on route " . $historyRow["des"];
-								
-								// Figure out what day of the week this happened
 								$weekday = date('w', strtotime(substr($historyRow["tmstmp"],0,4) . substr($historyRow["tmstmp"],4,2) . substr($historyRow["tmstmp"],6,2)));
-								echo " on a " . $weekdays[$weekday] . "</div>";
+
+								$timeStamp = substr($tmstmp,14,5); 
+								$hours = substr($timeStamp,0,2);
+								$minutes = substr($timeStamp,3,2);
+								$totalMins = ($hours * 60) + $minutes;
+
+								$scheduleIndex = 0;
+								$lastTime = 0;
+								$whileFlag = true;
 								
-								$stHighlight = !$stHighlight;
+								while($scheduleIndex < count($scheduleIds) && $whileFlag)
+								{
+
+									if($scheduleIds[$scheduleIndex] == $stopIds[$stIndex] )
+									{
+
+										if($scheduleDys[$scheduleIndex] == $weekday)
+										{
+
+											if(strlen($scheduleTms[$scheduleIndex]) == 4)
+											{
+												
+
+												$scheduleHours = substr($scheduleTms[$scheduleIndex],0,1);
+												$scheduleMinutes = substr($scheduleTms[$scheduleIndex],2,2);
+												
+
+											}
+											else
+											{
+												
+
+												$scheduleHours = substr($scheduleTms[$scheduleIndex],0,2);
+												$scheduleMinutes = substr($scheduleTms[$scheduleIndex],3,2);
+											}
+											
+
+											$scheduleTotalMinutes = ($scheduleHours * 60) + $scheduleMinutes; 
+
+											$absValue = abs($totalMins - $scheduleTotalMinutes);
+
+											if($absValue < 10)
+											{
+												$runningTotal [$scheduleIndex] += ($totalMins - $scheduleTotalMinutes);
+												$numAdditions [$scheduleIndex]++;
+												$whileFlag = false;
+											}
+											else
+											{
+
+												$scheduleIndex++;
+	
+											}
+
+										}
+										else
+										{
+											$scheduleIndex++;
+										}
+
+
+									}
+									else
+									{
+										$scheduleIndex++;
+									}
+
+								}
 								$stFound = true;
 							}
 							$stLast = $stopNms[$stIndex];
 						}
 						$stIndex++;
 					}
-					
+				
 					$hsIndex++;
 				}
 				
@@ -304,7 +377,92 @@
 				echo "<div class=\"data_field0\">There is no data that matches your filter... Please choose another date range, route, or stop to filter!</div>";
 			}
 			
+			$lastName = $scheduleIds[0];
+
+			for ($x = 0; $x < count($runningTotal); $x++) 
+			{
+				if($runningTotal [$x] != 0)
+				{
+					$id = $scheduleIds[$x];
+					$stLoc = array_search($id, $stopIds);
+
+					
+					$diff = $runningTotal [$x] / $numAdditions [$x];
+
+					if($diff > 0)
+					{
+						$colorFlag = "#EB4034";
+						if($diff ==1)
+						{
+							$minFlag = " minute late.";
+
+						}
+						else
+						{
+							$minFlag = " minutes late.";
+
+						}
+
+					}
+					else 
+					{
+						$colorFlag = "#34EB64";
+						if($diff == -1)
+						{
+							$minFlag = " minute early.";
+
+						}
+						else
+						{
+							$minFlag = " minutes early.";
+
+						}
+					}
+
+					$diff = round(abs($diff),1);
+
+					
+					if($lastName !=  $scheduleIds[$x])
+					{
+						$stHighlight = !$stHighlight;
+						if ($stHighlight)
+						{
+							echo "<div class=\"data_field1\">" . "Stop: " . $stopNms[$stLoc] . "</div>";
+						}
+						else
+						{
+							echo "<div class=\"data_field2\">" . "Stop: " . $stopNms[$stLoc] . "</div>";
+							
+						}
+						
+						$lastName = $scheduleIds[$x];
+
+
+
+					}
+					else
+					{
+						
+						if ($stHighlight)
+						{
+							echo "<div class=\"data_field1\">" . "Scheduled time: " . $scheduleTms[$x] . " | Average difference: <span style =\"color: " . $colorFlag . "\">" . $diff . " </span>" . $minFlag . " </div>";
+
+						}
+						else
+						{
+							echo "<div class=\"data_field2\">" . "Scheduled time: " . $scheduleTms[$x] . " | Average difference: <span style =\"color: " . $colorFlag . "\">" . $diff . " </span>" . $minFlag . " </div>";
+						}
+					}
+
+				}
+	
+				
+			}
+
+			
 		}
+		
+		
 ?>
 			</div>
 		</div>
@@ -315,4 +473,5 @@
 	
 	$conn->close();
 ?>
+
 
